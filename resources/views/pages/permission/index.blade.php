@@ -2,32 +2,30 @@
     <div class="content">
 
         {{-- Breadcrumb --}}
-        <x-admin.breadcrumb
-            button_name="Add Permission"
-            button_id="add_permission"
-            :parent_route="route('dashboard')"
-        />
+        <x-admin.breadcrumb title="Permission List" route="permission.create">
+                <x-admin.button button_id="add_permission" button_name="Add Permission"/>
+        </x-admin.breadcrumb>
 
         {{-- Permissions Table --}}
         <x-admin.card-table
             title="Roles & Permissions List"
-            :headers="['#', 'Role Name', 'Description', 'Status', 'Action']"
+            :headers="['#', 'Permission Name', 'Guard Name', 'Group Name', 'Status', 'Action']"
         >
             @forelse ($permissions as $index => $permission)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $permission->name ?? 'N/A' }}</td>
-                    <td>{{ $permission->description ?? 'N/A' }}</td>
+                    <td>{{ $permission->name ?? '-' }}</td>
+                    <td>{{ $permission->guard_name ?? '-' }}</td>
+                    <td>{{ $permission->group_name ?? '-' }}</td>
                     <td>
-                        <span class="badge bg-success-transparent">Active</span>
+                        @if($permission->is_active)
+                            <span class="badge bg-success">Active</span>
+                        @else
+                            <span class="badge bg-danger">Inactive</span>
+                        @endif
                     </td>
                     <td>
-                        <a href="javascript:void(0);"
-                            class="delete_modal btn btn-sm p-0 border-0"
-                            style="background:none; font-size:12px;"
-                            data-id="{{ $permission->id ?? '' }}">
-                            <i class="ti ti-trash text-danger"></i>
-                        </a>
+                        <x-admin.delete :id="$permission->id" target="permissions.destroy" msg="You want to delete the permission, this can't be undone once you delete." />
                     </td>
                 </tr>
             @empty

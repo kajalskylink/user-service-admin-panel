@@ -44,5 +44,6 @@ Route::middleware([ApiAuth::class])->group(function () {
     // Permission Route
     Route::controller(PermissionController::class)->prefix('permissions')->name('permissions.')->group(function () {
         Route::get('/', 'index')->name('index');
+        Route::delete('/delete/{id}', 'destroy')->name('destroy');
     });
 });

@@ -1,95 +1,69 @@
-{{--  <!-- Delete Modal -->
-<div class="modal fade" id="delete_modal{{ $id ?? '' }}">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body text-center">
-                <span class="avatar avatar-xl bg-transparent-danger text-danger mb-3">
-                    <i class="ti ti-trash-x fs-36"></i>
-                </span>
-                <h4 class="mb-1">Confirm Delete</h4>
-                <p class="mb-3">{{ $msg }}</p>
-                <form action="" method="POST" id="delete_item{{ $id ?? '' }}">
-                    @csrf
-                    @method('POST')
-                    <input type="hidden" id="delete_id{{ $id ?? '' }}" name="id">
-                </form>
-                <div class="d-flex justify-content-center">
-                    <a href="javascript:void(0);" class="btn btn-light me-3" data-bs-dismiss="modal">Cancel</a>
-                    <a href="#" id="delete_submit{{ $id ?? '' }}" class="btn btn-danger" >Yes, Delete</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- \Delete Modal -->
- @push('scripts')
-<script>
-    $(document).ready(()=>{
-        $('.delete_modal').on('click', function () {
-            let id = $(this).data('id');
-            $('#delete_id{{ $id ?? '' }}').val(id);
-        });
+@props(['id', 'target', 'msg' => 'You want to delete this item, this can\'t be undone once you delete.'])
 
-        $('#delete_submit{{ $id ?? '' }}').on('click', function (event) {
-            event.preventDefault();
-            let id = $('#delete_id{{ $id ?? '' }}').val();
-            let form = $("#delete_item{{ $id ?? '' }}");
-            let actionUrl = "{{ route($target, [$model=>':id']) }}".replace(':id', id);
-            form.attr('action', actionUrl);
-            form.off('submit').submit();
-        });
-    });
-</script>
-@endpush  --}}
+@php
+    $actionUrl = route($target, $id);
+@endphp
 
-<!-- Delete Modal -->
-<div class="modal fade" id="delete_modal">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body text-center">
-                <span class="avatar avatar-xl bg-transparent-danger text-danger mb-3">
-                    <i class="ti ti-trash-x fs-36"></i>
-                </span>
-                <h4 class="mb-1">Confirm Delete</h4>
-                <p class="mb-3" id="delete_msg">{{ $msg ?? 'Are you sure?' }}</p>
-                <form action="" method="POST" id="delete_item" data-action-template="{{ route($target, [$model=>':id']) }}">
-                    @csrf
-                    @method('DELETE')
-                    <input type="hidden" id="delete_id" name="id">
-                </form>
-                <div class="d-flex justify-content-center">
-                    <a href="javascript:void(0);" class="btn btn-light me-3" data-bs-dismiss="modal">Cancel</a>
-                    <a href="#" id="delete_submit" class="btn btn-danger">Yes, Delete</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- End Delete Modal -->
+<a href="javascript:void(0);" class="btn-delete btn btn-sm p-0 border-0" style="background:none; font-size:15px;" data-action="{{ $actionUrl }}" data-msg="{{ $msg }}">
+    <i class="ti ti-trash text-danger"></i>
+</a>
 
-@push('scripts')
-	<script>
-		$(document).ready(function () {
+@once
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            $(document).ready(function () {
+                $(document).on('click', '.btn-delete', function (event) {
+                    event.preventDefault();
+                    let actionUrl = $(this).data('action');
+                    let msg = $(this).data('msg');
 
-			// Open modal dynamically
-			$(document).on('click', '.delete_modal', function () {
-				let id = $(this).data('id');
-				$('#delete_id').val(id); // Use a single modal input
-				$('#delete_modal').modal('show');
-			});
+                    Swal.fire({
+                        html: `
+                            <div class="text-center mt-2">
+                                <span class="avatar avatar-xl bg-transparent-danger text-danger mb-3" style="width: 4rem; height: 4rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%;">
+                                    <i class="ti ti-trash-x fs-36" style="font-size: 36px;"></i>
+                                </span>
+                                <h4 class="mb-1">Confirm Delete</h4>
+                                <p class="mb-3">${msg}</p>
+                            </div>
+                        `,
+                        showCancelButton: true,
+                        reverseButtons: true, // Output Cancel on Left, Confirm on Right
+                        confirmButtonText: 'Yes, Delete',
+                        cancelButtonText: 'Cancel',
+                        customClass: {
+                            confirmButton: 'btn btn-danger',
+                            cancelButton: 'btn btn-light me-3',
+                            actions: 'mt-0 mb-2' 
+                        },
+                        buttonsStyling: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            let form = $('<form>', {
+                                'method': 'POST',
+                                'action': actionUrl
+                            });
 
-			// Submit delete form dynamically
-			$(document).on('click', '#delete_submit', function (event) {
-				event.preventDefault();
-				let id = $('#delete_id').val();
-				let form = $("#delete_item");
-				let actionUrl = $(form).data('action-template').replace(':id', id);
-				form.attr('action', actionUrl);
-				form.submit();
-			});
+                            let token = $('<input>', {
+                                'type': 'hidden',
+                                'name': '_token',
+                                'value': '{{ csrf_token() }}'
+                            });
 
-		});
+                            let method = $('<input>', {
+                                'type': 'hidden',
+                                'name': '_method',
+                                'value': 'DELETE'
+                            });
 
-	</script>
-@endpush
-
+                            form.append(token, method);
+                            $('body').append(form);
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        </script>
+    @endpush
+@endonce

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Constant\Constant;
+use App\Constants\Constants;
 use App\Services\API\UserAPIService;
 use Illuminate\Http\Request;
 
@@ -52,7 +52,7 @@ class UserController extends Controller
     public function destroy($id)
     {
         $response = $this->userAPIService->deleteUser($id);
-        $status = $response->successful() ? Constant::SUCCESS : Constant::ERROR;
+        $status = $response->successful() ? Constants::SUCCESS : Constants::ERROR;
         $message = $response->successful() ? "User successfully deleted." : "Unable to delete user.";
         return redirect()->back()->with($status, $message);
     }

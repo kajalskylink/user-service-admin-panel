@@ -2,11 +2,9 @@
     <div class="content">
 
         {{-- Breadcrumb --}}
-        <x-admin.breadcrumb
-            button_name="Add User"
-            :route="route('users.create')"
-            :parent_route="route('dashboard')"
-        />
+        <x-admin.breadcrumb title="User List" route="users.create">
+            <x-admin.button button_id="add_user" button_name="Add User"/>
+        </x-admin.breadcrumb>
 
         {{-- Users Table --}}
         <x-admin.card-table
@@ -23,12 +21,7 @@
                         <span class="badge bg-success-transparent">Active</span>
                     </td>
                     <td>
-                        <a href="javascript:void(0);"
-                            class="delete_modal btn btn-sm p-0 border-0"
-                            style="background:none; font-size:15px;"
-                            data-id="{{ $user->id ?? '' }}">
-                            <i class="ti ti-trash text-danger"></i>
-                        </a>
+                        <x-admin.delete :id="$user->id" target="users.destroy" msg="Are you sure you want to delete this user? This action cannot be undone." />
                     </td>
                 </tr>
             @empty
@@ -38,12 +31,6 @@
             @endforelse
         </x-admin.card-table>
 
-        {{-- Delete Confirmation Modal --}}
-        <x-admin.delete
-            :target="'users.destroy'"
-            :model="'id'"
-            msg="Are you sure you want to delete this user? This action cannot be undone."
-        />
 
     </div>
 </x-admin-layout>

@@ -77,4 +77,11 @@ class UserAPIService
         $this->method = 'POST';
         return $this->sendRequest();
     }
+
+    public function deletePermission($id)
+    {
+        $this->url = '/api/user-service/permissions/' . $id;
+        $this->method = 'DELETE';
+        return $this->sendRequest();
+    }
 }

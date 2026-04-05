@@ -68,8 +68,30 @@ class UserAPIService
         return $this->sendRequest();
     }
 
-    public function updateUser($id, $data)
+    public function updateUser($id, $data, $imageFile = null)
     {
+        if ($imageFile) {
+            $url = $this->userServiceAPIUrl . '/api/user-service/users/' . $id;
+            $header = [
+                'Accept' => 'application/json',
+                'X-Api-Key' => env('USER_SERVICE_API_KEY'),
+            ];
+            if ($token = session('api_token')) {
+                $header['Authorization'] = 'Bearer ' . $token;
+            }
+
+            // In Laravel, PUT with file upload needs to be a POST with _method=PUT
+            $data['_method'] = 'PUT';
+            
+            return Http::withHeaders($header)
+                ->attach(
+                    'profile_image', 
+                    file_get_contents($imageFile->getRealPath()), 
+                    $imageFile->getClientOriginalName()
+                )
+                ->post($url, $data);
+        }
+
         $this->data = $data;
         $this->url = '/api/user-service/users/' . $id;
         $this->method = 'PUT';

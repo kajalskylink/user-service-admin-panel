@@ -275,7 +275,13 @@
                         <a href="javascript:void(0);" class="dropdown-toggle d-flex align-items-center"
                             data-bs-toggle="dropdown">
                             <span class="avatar avatar-sm online">
-                                <img src="{{ asset('img/profiles/avatar-12.jpg') }}" alt="Img" class="img-fluid rounded-circle">
+                                @php
+                                    $sessionProfileImage = session('api_user.profile_image');
+                                    $headerProfileImageUrl = !empty($sessionProfileImage) 
+                                        ? rtrim(env('USER_SERVICE_API_URL'), '/') . '/' . ltrim($sessionProfileImage, '/') 
+                                        : asset('img/profiles/avatar-02.jpg');
+                                @endphp
+                                <img src="{{ $headerProfileImageUrl }}" alt="Img" class="img-fluid rounded-circle">
                             </span>
                         </a>
                         <div class="dropdown-menu shadow-none">
@@ -283,36 +289,25 @@
                                 <div class="card-header">
                                     <div class="d-flex align-items-center">
                                         <span class="avatar avatar-lg me-2 avatar-rounded">
-                                            <img src="{{ asset('img/profiles/avatar-12.jpg') }}" alt="img">
+                                            <img src="{{ $headerProfileImageUrl }}" alt="img">
                                         </span>
                                         <div>
-                                            <h5 class="mb-0">Kevin Larry</h5>
-                                            <p class="fs-12 fw-medium mb-0">warren@example.com</p>
+                                            <h5 class="mb-0">{{ session('api_user.name') ?? 'Admin' }}</h5>
+                                            <p class="fs-12 fw-medium mb-0">{{ session('api_user.email') ?? 'admin@example.com' }}</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <a class="dropdown-item d-inline-flex align-items-center p-0 py-2" href="profile.html">
+                                    <a class="dropdown-item d-inline-flex align-items-center p-0 py-2" href="{{ route('profile.edit') }}">
                                         <i class="ti ti-user-circle me-1"></i>My Profile
                                     </a>
-                                    <a class="dropdown-item d-inline-flex align-items-center p-0 py-2" href="bussiness-settings.html">
-                                        <i class="ti ti-settings me-1"></i>Settings
-                                    </a>
 
-                                    <a class="dropdown-item d-inline-flex align-items-center p-0 py-2" href="profile-settings.html">
-                                        <i class="ti ti-circle-arrow-up me-1"></i>My Account
+                                    <a class="dropdown-item d-inline-flex align-items-center p-0 py-2 mt-2" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        <i class="ti ti-login me-1 text-danger"></i><span class="text-danger">Logout</span>
                                     </a>
-                                    <a class="dropdown-item d-inline-flex align-items-center p-0 py-2" href="knowledgebase.html">
-                                        <i class="ti ti-question-mark me-1"></i>Knowledge Base
-                                    </a>
-                                </div>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
-                                <div class="card-footer">
-                                    <a class="dropdown-item d-inline-flex align-items-center p-0 py-2" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                        <i class="ti ti-login me-2"></i>Logout
-                                    </a>
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -325,9 +320,8 @@
         <div class="dropdown mobile-user-menu">
             <a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
             <div class="dropdown-menu dropdown-menu-end">
-                <a class="dropdown-item" href="profile.html">My Profile</a>
-                <a class="dropdown-item" href="profile-settings.html">Settings</a>
-                <a class="dropdown-item" href="login.html">Logout</a>
+                <a class="dropdown-item" href="{{ route('profile.edit') }}">My Profile</a>
+                <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
             </div>
         </div>
         <!-- /Mobile Menu -->

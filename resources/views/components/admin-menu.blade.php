@@ -22,7 +22,7 @@
             <p class="fs-10">{{ collect(session('api_user.roles'))->first() ?? 'System Admin' }}</p>
         </div>
     </div>
-    
+
     <div class="sidebar-inner slimscroll">
         <div id="sidebar-menu" class="sidebar-menu">
             <ul>
@@ -30,7 +30,7 @@
                 <li>
                     <ul>
                         <li>
-                            <a href="{{ route('dashboard') }}" class="{{ Route::currentRouteName() == 'dashboard' ? 'active' : '' }}">
+                            <a href="{{ route('dashboard') }}" class="{{ Route::currentRouteName() == 'dashboard' ? 'active bg-primary text-white' : '' }}">
                                 <i class="ti ti-smart-home"></i>
                                 <span>Dashboard</span>
                             </a>
@@ -47,7 +47,7 @@
                         <x-permission name="can-view-user">
                         <li>
                             <a href="{{ route('users.index') }}"
-                                class="{{ Route::currentRouteName() == 'users.index' ? 'active' : '' }}">
+                                class="{{ Route::currentRouteName() == 'users.index' ? 'active bg-primary text-white' : '' }}">
                                 <i class="ti ti-users"></i>
                                 <span>Users</span>
                             </a>
@@ -57,7 +57,7 @@
                         <x-permission name="can-view-role">
                         <li>
                             <a href="{{ route('roles.index') }}"
-                               class="{{ Route::currentRouteName() == 'roles.index' || Route::currentRouteName() == 'roles.create' || Route::currentRouteName() == 'roles.edit' ? 'active' : '' }}">
+                               class="{{ Route::currentRouteName() == 'roles.index' || Route::currentRouteName() == 'roles.create' || Route::currentRouteName() == 'roles.edit' ? 'active bg-primary text-white' : '' }}">
                                 <i class="ti ti-shield-lock"></i>
                                 <span>Roles</span>
                             </a>
@@ -67,7 +67,7 @@
                         <x-permission name="can-view-permission">
                         <li>
                             <a href="{{ route('permissions.index') }}"
-                                class="{{ Route::currentRouteName() == 'permissions.index' ? 'active' : '' }}">
+                                class="{{ Route::currentRouteName() == 'permissions.index' ? 'active bg-primary text-white' : '' }}">
                                 <i class="ti ti-key"></i>
                                 <span>Permissions</span>
                             </a>
@@ -82,3 +82,11 @@
     </div>
 </div>
 <!-- /Sidebar -->
+
+<style>
+    /* Force icons and text to be white when the parent link is active/text-white */
+    .sidebar .sidebar-menu ul li a.text-white i,
+    .sidebar .sidebar-menu ul li a.text-white span {
+        color: #ffffff !important;
+    }
+</style>

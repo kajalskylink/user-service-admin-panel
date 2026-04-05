@@ -4,8 +4,8 @@
     $actionUrl = route($target, $id);
 @endphp
 
-<a href="javascript:void(0);" class="btn-delete btn btn-sm p-0 border-0" style="background:none; font-size:15px;" data-action="{{ $actionUrl }}" data-msg="{{ $msg }}">
-    <i class="ti ti-trash text-danger"></i>
+<a href="javascript:void(0);" class="btn-delete btn p-0 border-0 action-icon" style="font-size:15px;" data-action="{{ $actionUrl }}" data-msg="{{ $msg }}">
+    <i class="ti ti-trash"></i>
 </a>
 
 @once
@@ -35,7 +35,7 @@
                         customClass: {
                             confirmButton: 'btn btn-danger',
                             cancelButton: 'btn btn-light me-3',
-                            actions: 'mt-0 mb-2' 
+                            actions: 'mt-0 mb-2'
                         },
                         buttonsStyling: false
                     }).then((result) => {

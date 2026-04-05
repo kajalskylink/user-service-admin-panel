@@ -26,21 +26,40 @@ class UserController extends Controller
         $data = json_decode($response->body(), false);
 
         $responseData = [
-            'users' => $data->users ?? []
+            'users' => $data->users ?? [],
+            'roles' => $data->roles ?? [],
         ];
 
         return view('pages.users.index', $responseData);
     }
 
     /**
-     * Show the form for creating a new user.
+     * Store a newly created user in storage.
      *
-     * @return \Illuminate\View\View
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function create()
+    public function store(Request $request)
     {
-        config(['app.page_title' => 'Create User']);
-        return view('pages.user.create');
+        $response = $this->userAPIService->storeUser($request->all());
+        $status = $response->successful() ? Constants::SUCCESS : Constants::ERROR;
+        $message = $response->successful() ? "User successfully created." : ($response->json('message') ?? "Unable to create user.");
+        return redirect()->back()->with($status, $message);
+    }
+
+    /**
+     * Update the specified user in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update(Request $request, $id)
+    {
+        $response = $this->userAPIService->updateUser($id, $request->all());
+        $status = $response->successful() ? Constants::SUCCESS : Constants::ERROR;
+        $message = $response->successful() ? "User successfully updated." : ($response->json('message') ?? "Unable to update user.");
+        return redirect()->back()->with($status, $message);
     }
 
     /**
@@ -55,5 +74,18 @@ class UserController extends Controller
         $status = $response->successful() ? Constants::SUCCESS : Constants::ERROR;
         $message = $response->successful() ? "User successfully deleted." : "Unable to delete user.";
         return redirect()->back()->with($status, $message);
+    }
+
+    /**
+     * Change user status.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changeStatus(Request $request, $id)
+    {
+        $response = $this->userAPIService->changeUserStatus($id, $request->is_active);
+        return response()->json($response->json(), $response->status());
     }
 }

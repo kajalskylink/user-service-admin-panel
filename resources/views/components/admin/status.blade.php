@@ -11,7 +11,7 @@
                 <form action="" method="POST" id="status_form">
                     @csrf
                     @method('PATCH')
-                    <input type="hidden" name="status" id="status_input">
+                    <input type="hidden" name="is_active" id="status_input">
                 </form>
                 <div class="d-flex justify-content-center">
                     <a href="javascript:void(0);" class="btn btn-light me-3" data-bs-dismiss="modal">Cancel</a>

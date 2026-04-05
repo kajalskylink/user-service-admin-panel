@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\PageAccess;
+use App\Http\Middleware\RefreshPermissions;
 use App\Http\Middleware\SetPageTitleFromRoute;
 use App\Http\Middleware\UserPageAccess;
 use Illuminate\Foundation\Application;
@@ -15,7 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-      
+        $middleware->alias([
+            'refresh_permissions' => RefreshPermissions::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -37,6 +37,10 @@ class UserAPIService
 
         if ($this->method === 'POST') {
             $response = Http::withHeaders($header)->post($url, $data);
+        } else if ($this->method === 'PUT') {
+            $response = Http::withHeaders($header)->put($url, $data);
+        } else if ($this->method === 'PATCH') {
+            $response = Http::withHeaders($header)->patch($url, $data);
         } else if($this->method === 'GET') {
             $response = Http::withHeaders($header)->get($url, $data);
         }else if ($this->method === 'DELETE') {
@@ -56,10 +60,34 @@ class UserAPIService
         return $this->sendRequest();
     }
 
+    public function storeUser($data)
+    {
+        $this->data = $data;
+        $this->url = '/api/user-service/users';
+        $this->method = 'POST';
+        return $this->sendRequest();
+    }
+
+    public function updateUser($id, $data)
+    {
+        $this->data = $data;
+        $this->url = '/api/user-service/users/' . $id;
+        $this->method = 'PUT';
+        return $this->sendRequest();
+    }
+
     public function deleteUser($id)
     {
         $this->url = '/api/user-service/users/' . $id;
         $this->method = 'DELETE';
+        return $this->sendRequest();
+    }
+
+    public function changeUserStatus($id, $isActive)
+    {
+        $this->data = ['is_active' => $isActive];
+        $this->url = "/api/user-service/users/{$id}/change-status";
+        $this->method = 'PATCH';
         return $this->sendRequest();
     }
 
@@ -71,10 +99,19 @@ class UserAPIService
         return $this->sendRequest();
     }
 
-    public function storePermission()
+    public function storePermission($data)
     {
+        $this->data = $data;
         $this->url = '/api/user-service/permissions';
         $this->method = 'POST';
+        return $this->sendRequest();
+    }
+
+    public function updatePermission($id, $data)
+    {
+        $this->data = $data;
+        $this->url = '/api/user-service/permissions/' . $id;
+        $this->method = 'PUT';
         return $this->sendRequest();
     }
 
@@ -83,5 +120,78 @@ class UserAPIService
         $this->url = '/api/user-service/permissions/' . $id;
         $this->method = 'DELETE';
         return $this->sendRequest();
+    }
+
+    // Role API
+    public function getRoles()
+    {
+        $this->url = '/api/user-service/roles';
+        $this->method = 'GET';
+        return $this->sendRequest();
+    }
+
+    public function createRole()
+    {
+        $this->url = '/api/user-service/roles/create';
+        $this->method = 'GET';
+        return $this->sendRequest();
+    }
+
+    public function storeRole($data)
+    {
+        $this->data = $data;
+        $this->url = '/api/user-service/roles';
+        $this->method = 'POST';
+        return $this->sendRequest();
+    }
+
+    public function updateRole($id, $data)
+    {
+        $this->data = $data;
+        $this->url = '/api/user-service/roles/' . $id;
+        $this->method = 'PUT';
+        return $this->sendRequest();
+    }
+
+    public function deleteRole($id)
+    {
+        $this->url = '/api/user-service/roles/' . $id;
+        $this->method = 'DELETE';
+        return $this->sendRequest();
+    }
+
+    public function editRole($id)
+    {
+        $this->url = '/api/user-service/roles/' . $id . '/edit';
+        $this->method = 'GET';
+        return $this->sendRequest();
+    }
+
+    public function changeRoleStatus($id, $isActive)
+    {
+        $this->data = ['is_active' => $isActive];
+        $this->url = "/api/user-service/roles/{$id}/status";
+        $this->method = 'PATCH';
+        return $this->sendRequest();
+    }
+
+    public function refreshUserSession()
+    {
+        $apiUser = session('api_user');
+        if (!$apiUser || !isset($apiUser['email'])) {
+            return;
+        }
+
+        $this->data = ['email' => $apiUser['email']];
+        $this->url = '/api/user-service/check-user';
+        $this->method = 'GET';
+        $response = $this->sendRequest();
+
+        if ($response->successful()) {
+            $userData = $response->json('user');
+            if ($userData) {
+                session(['api_user' => $userData]);
+            }
+        }
     }
 }

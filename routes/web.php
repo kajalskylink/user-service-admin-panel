@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\ApiAuth;
@@ -23,7 +24,7 @@ Route::middleware([ApiGuest::class])->group(function () {
 });
 
 // Authenticated Routes (Only accessible if logged in)
-Route::middleware([ApiAuth::class])->group(function () {
+Route::middleware([ApiAuth::class, 'refresh_permissions'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/dashboard', function () {
@@ -37,13 +38,30 @@ Route::middleware([ApiAuth::class])->group(function () {
     });
 
     // User Route
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
-    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::controller(UserController::class)->prefix('users')->name('users.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/', 'store')->name('store');
+        Route::post('/update/{user}', 'update')->name('update');
+        Route::delete('/delete/{user}', 'destroy')->name('destroy');
+        Route::patch('/{user}/change-status', 'changeStatus')->name('changeStatus');
+    });
 
     // Permission Route
     Route::controller(PermissionController::class)->prefix('permissions')->name('permissions.')->group(function () {
         Route::get('/', 'index')->name('index');
-        Route::delete('/delete/{id}', 'destroy')->name('destroy');
+        Route::post('/', 'store')->name('store');
+        Route::post('/update/{permission}', 'update')->name('update');
+        Route::delete('/delete/{permission}', 'destroy')->name('destroy');
+    });
+
+    // Role Route
+    Route::controller(RoleController::class)->prefix('roles')->name('roles.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/', 'store')->name('store');
+        Route::get('/{role}/edit', 'edit')->name('edit');
+        Route::post('/update/{role}', 'update')->name('update');
+        Route::delete('/delete/{role}', 'destroy')->name('destroy');
+        Route::patch('/{role}/change-status', 'changeStatus')->name('changeStatus');
     });
 });

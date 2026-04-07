@@ -59,9 +59,9 @@
     <link rel="stylesheet" href="{{ asset('admin/css/toastr.min.css') }}">
 
     <!-- Main CSS -->
-    <link rel="stylesheet" href="{{ asset('admin/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/css/style.css') }}?v={{ time() }}">
 
-    <link rel="stylesheet" href="{{ asset('admin/css/custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/css/custom.css') }}?v={{ time() }}">
 
 	<style>
 		#sidebar {
